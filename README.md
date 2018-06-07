@@ -47,7 +47,7 @@ Follow the instructions for setup the project:
 
 
 
-Issues/Tasks/Limitatoins
+Issues/Tasks/Limitations
 ------------
 
 - Since, there is no user authentication, we can't restrict the user article voting. Single user can vote multiple
