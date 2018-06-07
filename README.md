@@ -7,7 +7,7 @@ Our stack
 
 Back-end:
     - Python 2.7
-    - Django 1.10
+    - Django 1.11
     - MySQL 5.7
     - Linux
 
