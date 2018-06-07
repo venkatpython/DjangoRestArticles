@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+{% load static %}
+
+<html lang="en">
+<head>
+    {% block head %}
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    {% block title %}
+        <title>Articles Home Page</title>
+    {% endblock %}
+
+    <!--Add Css-->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}" />
+    <!--Add Js-->
+    {% block js %}
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function(){
+            $(".voting").click(function(){
+            article_id = $(this).val()
+                $.ajax({
+                    url: '/articles/vote/'+article_id+'/',
+                    type: 'GET',
+                    success: function(result) {
+                        votes = result["votes"]
+                        $(".votes_"+article_id).text(votes);
+                    }
+                });
+            });
+        });
+    </script>
+    {% endblock %}
+    {% endblock %}
+</head>
+<body>
+{% block main_content %}
+<div class="container" style="align:center">
+  <h2>Artciles</h2>
+    <div>
+        <a href="/create/article/">Create a Article</a> | <a href="/articles/">Get Sorted Articles</a>
+    </div>
+  <p></p>
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Title</th>
+        <th>Author</th>
+        <th>Created Time</th>
+          <th>Votes</th>
+          <th>Voting</th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for article in articles %}
+      <tr>
+        <td>{{ article.title }}</td>
+        <td>{{ article.author }}</td>
+        <td>{{ article.created }}</td>
+          <td class="votes_{{article.id}}">{{ article.votes }}</td>
+          <td><button type="button" class="btn btn-success voting" value="{{ article.id }}">Vote</button></td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+</body>
+{% endblock %}
+</html>

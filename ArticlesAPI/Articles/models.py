@@ -3,10 +3,8 @@ from __future__ import unicode_literals
 
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
+from django.contrib.auth.models import User
 
-# Create your models here.
-# class Author(models.Model):
-#     name = models.CharField(_('name'), max_length=64)
 
 class Articles(models.Model):
     title = models.CharField(_('Article name'), max_length=64)

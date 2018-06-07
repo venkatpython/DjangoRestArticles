@@ -18,4 +18,4 @@ class ArticleSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Articles
-        fields = ('title','content','author')
+        fields = ('title','content','author', 'votes')

@@ -1,26 +1,43 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-# from django.shortcuts import render
-from django.http import HttpResponse
+from django.shortcuts import render, redirect
 from rest_framework import viewsets
 from Articles.serializers import ArticleSerializer
 from Articles.models import Articles
-
+from Articles.forms import ArticleForm
 
 from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-from rest_framework.renderers import JSONRenderer
 from rest_framework.parsers import JSONParser
 from rest_framework.decorators import api_view
-# from snippets.models import Snippet
-# from snippets.serializers import SnippetSerializer
 
 
 # Create your views here.
 def home(request):
-    return HttpResponse("Hey! I'm Ok")
+    articles = Articles.objects.all().order_by('-created')
+    return render(request, 'home.html', {"articles": articles})
 
+
+def create_article(request):
+    """
+
+    :param request:
+    :return:
+    """
+    if request.method == "POST":
+        title = request.POST.get("title")
+        author = request.POST.get("author")
+        content = request.POST.get("content")
+        Articles.objects.create(
+            title = title,
+            author = author,
+            content = content
+        )
+        return redirect('/')
+    else:
+        form = ArticleForm()
+    return render(request, "create_article.html", {"form": form})
 
 class ArticlesViewSet(viewsets.ModelViewSet):
     """
@@ -74,6 +91,7 @@ def article_detail(request, pk):
         article.delete()
         return HttpResponse(status=204)
 
+@api_view(['GET'])
 def article_vote(request, pk):
     """
     Vote the Article
@@ -83,9 +101,23 @@ def article_vote(request, pk):
     """
     try:
         article = Articles.objects.get(pk=pk)
-        article.vote = 1
+        article.votes += 1
         article.save()
         serializer = ArticleSerializer(article)
         return JsonResponse(serializer.data)
+    except Articles.DoesNotExist:
+        return HttpResponse(status=404)
+
+
+def article_list_desc(request):
+    """
+
+    :param request:
+    :return:
+    """
+    try:
+        articles = Articles.objects.all().order_by("votes")
+        serializer = ArticleSerializer(articles, many=True)
+        return JsonResponse(serializer.data, safe=False)
     except Articles.DoesNotExist:
         return HttpResponse(status=404)
